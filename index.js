@@ -61,6 +61,29 @@ async function run() {
       res.send(result);
     });
 
+    // UPDATE - Edit partner info
+    app.put("/partners/:id", async (req, res) => {
+      const id = req.params.id;
+      const updatedData = req.body;
+
+      const query = { _id: new ObjectId(id) };
+      const updates = {
+        $set: {
+          name: updatedData.name,
+          profileImage: updatedData.profileImage,
+          subject: updatedData.subject,
+          studyMode: updatedData.studyMode,
+          availabilityTime: updatedData.availabilityTime,
+          location: updatedData.location,
+          experienceLevel: updatedData.experienceLevel,
+          rating: updatedData.rating,
+          email: updatedData.email,
+        },
+      };
+      const result = await partnersCollection.updateOne(query, updates);
+      res.send(result);
+    });
+
     await client.db("admin").command({ ping: 1 });
     console.log("Connected to MongoDB successfully!");
   } catch (error) {
