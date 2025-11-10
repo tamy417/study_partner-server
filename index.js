@@ -39,7 +39,27 @@ async function run() {
 
     // READ - Get all partners
     app.get("/partners", async (req, res) => {
-      const result = await partnersCollection.find().toArray();
+      const { subject, sort } = req.query;
+      const query = {};
+
+      if (subject) {
+        query.subject = { $regex: subject, $options: "i" };
+      }
+
+      let sortOption = {};
+      if (sort === "asc")
+        sortOption = {
+          experienceLevel: 1,
+        };
+      if (sort === "asc")
+        sortOption = {
+          experienceLevel: -1,
+        };
+
+      const result = await partnersCollection
+        .find(query)
+        .sort(sortOption)
+        .toArray();
       res.send(result);
     });
 
