@@ -34,6 +34,7 @@ async function run() {
     app.post("/partners", async (req, res) => {
       const newPartner = req.body;
       newPartner.createdAt = new Date();
+      newPartner.partnerCount = 0;
       const result = await partnersCollection.insertOne(newPartner);
       res.send(result);
     });
@@ -43,7 +44,8 @@ async function run() {
       const result = await partnersCollection
         .find()
         .sort({ rating: -1 })
-        .limit(6).toArray;
+        .limit(6)
+        .toArray();
       res.send(result);
     });
 
@@ -57,14 +59,8 @@ async function run() {
       }
 
       let sortOption = {};
-      if (sort === "asc")
-        sortOption = {
-          experienceLevel: 1,
-        };
-      if (sort === "asc")
-        sortOption = {
-          experienceLevel: -1,
-        };
+      if (sort === "asc") sortOption = { experienceLevel: 1 };
+      if (sort === "desc") sortOption = { experienceLevel: -1 };
 
       const result = await partnersCollection
         .find(query)
