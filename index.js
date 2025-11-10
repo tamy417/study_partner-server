@@ -51,6 +51,16 @@ async function run() {
       res.send(result);
     });
 
+    // READ - My Connections (by user email)
+    app.get("/myConnections", async (req, res) => {
+      const email = req.query.email;
+      if (!email) {
+        return res.status(400).send({ message: "Email query required" });
+      }
+      const result = await partnersCollection.find({ email }).toArray();
+      res.send(result);
+    });
+
     await client.db("admin").command({ ping: 1 });
     console.log("Connected to MongoDB successfully!");
   } catch (error) {
