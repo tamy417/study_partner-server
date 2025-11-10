@@ -84,6 +84,15 @@ async function run() {
       res.send(result);
     });
 
+    // PATCH - Increment partner request count
+    app.patch("/sendRequest/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const updatedDoc = { $inc: { partnerCount: 1 } };
+      const result = await partnersCollection.updateOne(query, updatedDoc);
+      res.send(result);
+    });
+
     await client.db("admin").command({ ping: 1 });
     console.log("Connected to MongoDB successfully!");
   } catch (error) {
