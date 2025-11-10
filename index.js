@@ -33,7 +33,17 @@ async function run() {
     // CREATE - Add a new partner
     app.post("/partners", async (req, res) => {
       const newPartner = req.body;
+      newPartner.createdAt = new Date();
       const result = await partnersCollection.insertOne(newPartner);
+      res.send(result);
+    });
+
+    // READ - top 6
+    app.get("/topPartners", async (req, res) => {
+      const result = await partnersCollection
+        .find()
+        .sort({ rating: -1 })
+        .limit(6).toArray;
       res.send(result);
     });
 
