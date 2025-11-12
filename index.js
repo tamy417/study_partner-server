@@ -148,6 +148,31 @@ async function run() {
       res.send(result);
     });
 
+    // DELETE request by ID
+    app.delete("/requests/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await requestsCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    // UPDATE - Update a partner request
+    app.put("/requests/:id", async (req, res) => {
+      try {
+        const id = req.params.id;
+        const updatedData = req.body; // { partnerName, subject, studyMode }
+
+        const query = { _id: new ObjectId(id) };
+        const update = { $set: updatedData };
+
+        const result = await requestsCollection.updateOne(query, update);
+        res.send(result);
+      } catch (err) {
+        console.error(err);
+        res.status(500).send({ message: "Failed to update request" });
+      }
+    });
+
     await client.db("admin").command({ ping: 1 });
     console.log("Connected to MongoDB successfully!");
   } catch (error) {
