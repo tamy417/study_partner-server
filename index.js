@@ -29,6 +29,7 @@ async function run() {
 
     const db = client.db("studyMateDB");
     const partnersCollection = db.collection("partners");
+    const requestsCollection = db.collection("requests");
 
     // CREATE - Add a new partner
     app.post("/partners", async (req, res) => {
@@ -124,6 +125,26 @@ async function run() {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await partnersCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    // SAVE partner request
+    app.post("/requests", async (req, res) => {
+      const requestData = req.body;
+      requestData.createdAt = new Date();
+      const result = await requestsCollection.insertOne(requestData);
+      res.send(result);
+    });
+
+    // READ - all partner requests by user email
+    app.get("/requests", async (req, res) => {
+      const email = req.query.email;
+      if (!email) {
+        return res.status(400).send({ message: "Email query required" });
+      }
+      const result = await requestsCollection
+        .find({ userEmail: email })
+        .toArray();
       res.send(result);
     });
 
